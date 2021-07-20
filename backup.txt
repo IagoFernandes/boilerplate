@@ -1,0 +1,853 @@
+openapi: 3.0.0
+info:
+  version: V1.0.0
+  title: Documentacao-API
+  description: Primeira versão da documentação da API
+  termsOfService: "https://blockchainone.com.br/assets/pdf/Termos_de_Uso-BlockchainOne.pdf"
+  contact:
+    name: Blockchain One
+    email: administrativo@blockchainone.com.br
+    url: https://blockchainone.com.br/contato
+
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/IagoFernandes/Documentacao-API/V1.0.0
+    
+security:
+  - ApiAuthKey: []
+  
+tags:
+  - name: Auth
+  - name: User
+
+paths:
+#---------------------------Token------------------------
+  /token:
+    post:
+      tags:
+        - Auth
+      description: Gera um token de acesso às funcionalidades da API. O token recebido expira em 2 horas.
+      operationId: token
+      requestBody:
+        description: JSON para a requisição de criação do token.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/tokenRequest'
+      responses:
+        200:
+          description: id_usuario foi validado e o token é enviado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  returnCode:
+                    type: string
+                    example: success
+                  tokenAccess:
+                    type: string
+                    example: "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwia2V5IjoidGVzdGUifQ.4U6yvolJiNUw-VRRHhRSPPYr10UozHBaaoO7kCksObU"
+        500:
+            description: UNEXPECTED_ERROR
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/500'
+#---------------------------create_organization-----------------------
+  /create_organization:
+    post:
+      tags:
+        - User
+      description: Cadastrar uma nova organização que deseja utilizar o serviço de registros de documentos em blockchain.
+      operationId: create_organization
+      requestBody:
+        description: JSON para a requisição de criação da organização.
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/createOrganizationRequest'
+      responses:
+        200:
+          description: A organização foi cadastrada com sucesso!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    properties:
+                      returnCode:
+                        type: string
+                        example: "success"
+                      orgKey:
+                        type: string
+                        example: "12902s4kpw3xyn2"
+                      message:
+                        type: string
+                        example: "Organização cadastrada com sucesso."
+        
+        500:
+          description: UNEXPECTED_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500'
+#---------------------------create_model------------------------
+  /create_model:
+    post:
+      tags:
+        - User
+      description: Cria um modelo com base nos atributos definidos pelo usuário.
+      operationId: create_model
+      parameters:
+        - name: tokenAccess
+          in: header
+          required: true
+          description: user token
+          schema:
+            type: string
+            example: "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwia2V5IjoidGVzdGUifQ.4U6yvolJiNUw-VRRHhRSPPYr10UozHBaaoO7kCksObU"
+      requestBody:
+        description: JSON para a requisição de criação de modelo.
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/createModelRequest'
+      responses:
+        200:
+          description: O modelo foi cadastrado com sucesso!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    properties:
+                      returnCode:
+                        type: string
+                        example: "success"
+                      model code:
+                        type: string
+                        example: "15i2gyx344kqqiebfy"
+                      message:
+                        type: string
+                        example: "Modelo criado com sucesso."
+        500:
+          description: UNEXPECTED_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500'
+#---------------------------deployContract------------------------
+  /deploy_contract:
+    post:
+      tags:
+        - User
+      description: Realiza o deploy do contrato escolhido pelo usuário em uma determinada rede blockchain. Relação de códigos e blockchain -> 0 para Ethereum, 1 para Ethereum Classic, 2 para Hyperledger, 3 para Klaytn, e 4 para Polygon(matic).Segue o link para descrição dos modelos padrão da aplicação. <a>https://drive.google.com/file/d/1CDdl0FI7U3EZqkgXCC90BqcAGoqxlzIs/view?usp=sharing
+      operationId: deployContract
+      parameters:
+        - name: tokenAccess
+          in: header
+          required: true
+          description: user token
+          schema:
+            type: string
+            example: "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwia2V5IjoidGVzdGUifQ.4U6yvolJiNUw-VRRHhRSPPYr10UozHBaaoO7kCksObU"
+      requestBody:
+        description: JSON para a requisição de deploy.
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/deployContractRequest'
+      responses:
+        200:
+          description: O deploy do contrato foi realizado com sucesso na blockchain.
+          content:
+            application/json:
+              schema:
+                description: "Schema para read"
+                type: object
+                properties:
+                  returnCode:
+                    type: string
+                    example: "success"
+                    description: código de retorno
+                  result:
+                    properties:
+                      idContract:
+                        type: string
+                        example: "12906k8kpw8n23s"
+                      ABI:
+                        type: string
+                        example: "[...]"
+                        description: ABI do contrato
+                      bytecode:
+                        type: string
+                        example: "..."
+                        description: bytecode do contrato
+                      address:
+                        type: string
+                        example: "0xA7D12580859c48e93b2BDED01A7D75c43302d0b9"
+                        description: endereço do contrato
+        500:
+          description: UNEXPECTED_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500'
+        501:
+          description: INTERNAL_SERVER_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/501'
+#---------------------------get_models------------------------
+  /get_models:
+    post:
+      tags:
+        - User
+      description: Busca por todos os modelos de determinada organização.
+      operationId: get_models
+      parameters:
+        - name: tokenAccess
+          in: header
+          required: true
+          description: user token
+          schema:
+            type: string
+            example: "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwia2V5IjoidGVzdGUifQ.4U6yvolJiNUw-VRRHhRSPPYr10UozHBaaoO7kCksObU"
+      responses:
+        200:
+          description: A busca pelos modelos cadastrados foi realizada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    properties:
+                      returnCode:
+                        type: string
+                        example: "success"
+                      results:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            model code:
+                              type: string
+                              example: 810vuoqkqs219yc
+                            description:
+                              type: string
+                              example: Primeiro modelo para teste
+                            attributes:
+                              type: string
+                              example: data01, data02, data03, data04
+        500:
+          description: UNEXPECTED_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500'
+#---------------------------get_contracts------------------------
+  /get_contracts:
+    post:
+      tags:
+        - User
+      description: Busca por todos os contratos de determinada organização.
+      operationId: get_contracts
+      parameters:
+        - name: tokenAccess
+          in: header
+          required: true
+          description: user token
+          schema:
+            type: string
+            example: "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwia2V5IjoidGVzdGUifQ.4U6yvolJiNUw-VRRHhRSPPYr10UozHBaaoO7kCksObU"
+      responses:
+        200:
+          description: A busca por contratos foi realizada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    properties:
+                      returnCode:
+                        type: string
+                        example: "success"
+                      results:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            idContract:
+                              type: string
+                              example: 810vuoqkqs219yc
+                            address:
+                              type: string
+                              example: "0x7800157b1e61b56889e0BE66C4566E05b31737D2"
+        500:
+          description: UNEXPECTED_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500'
+#---------------------------read_contract------------------------
+  /read_contract:
+    post:
+      tags:
+        - User
+      description: Realiza a leitura das informações de um documento que foi armazenado em uma blockchain de escolha da organização.
+      operationId: read contract
+      parameters:
+        - name: tokenAccess
+          in: header
+          required: true
+          description: user token
+          schema:
+            type: string
+            example: "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwia2V5IjoidGVzdGUifQ.4U6yvolJiNUw-VRRHhRSPPYr10UozHBaaoO7kCksObU"
+      requestBody:
+        description: JSON para a requisição de leitura.
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/readContractRequest'
+      responses:
+        200:
+          description: O documento foi encontrado com sucesso na blockchain.
+          content:
+            application/json:
+              schema:
+                description: "Schema para read"
+                type: object
+                properties:
+                  returnCode:
+                    type: string
+                    example: "success"
+                    description: Código de retorno.
+                  blockchain:
+                    type: string
+                    example: "0"
+                    description: Código que indica em qual blockchain foi feita a escrita.
+                  result:
+                    properties:
+                      title: 
+                        type: string
+                        example: title01
+                      sector:
+                        type: string
+                        example: sector01
+                      place: 
+                        type: string
+                        example: place01
+                      hashDocument:
+                        type: string
+                        example: hashDocument01
+                      timestamp:
+                        type: string
+                        example: 10000000
+        404:
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404'
+        500:
+          description: UNEXPECTED_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500'
+        501:
+          description: INTERNAL_SERVER_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/501' 
+#---------------------------write_contract------------------------
+  /write_contract:
+      post:
+        tags:
+          - User
+        description: Realiza a inserção das informações de um documento que será armazenado em uma blockchain de escolha da organização.
+        operationId: write contract
+        parameters:
+          - name: tokenAccess
+            in: header
+            required: true
+            description: user token
+            schema:
+              type: string
+              example: "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwia2V5IjoidGVzdGUifQ.4U6yvolJiNUw-VRRHhRSPPYr10UozHBaaoO7kCksObU"
+        requestBody:
+          description: JSON para a requisição de escrita.
+          required: true
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/writeContractRequest'
+        responses:
+          200:
+            description: O documento foi inserido com sucesso na blockchain.
+            content:
+              application/json:
+                schema:
+                  description: "Schema para read"
+                  type: object
+                  properties:
+                    result:
+                      properties:
+                        returnCode:
+                          type: string
+                          example: "success"
+                          description: Código de retorno.
+                        blockchain:
+                          type: string
+                          example: "0"
+                          description: Código que indica em qual blockchain foi feita a escrita.
+                        idDocument:
+                          type: string
+                          example: "asgas5g00fdnd"
+                          description: Indica em qual indice o registro foi feito.
+                        blocknumber:
+                          type: number
+                          example: 891516
+                        txId:
+                          type: string
+                          example: "0xf77e4c6bda48f1de325f6aecdd22e4eaf8cb19b3e6aff81ecb9dcc648184a046"  
+          412:
+            description: ALREADY_EXISTING_DOCUMENT
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/412'
+          500:
+            description: UNEXPECTED_ERROR
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/500'
+          501:
+            description: INTERNAL_SERVER_ERROR
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/501'
+#---------------------------multiple_read------------------------
+  /multiple_read:
+    post:
+      tags:
+        - User
+      description: Realiza a leitura das informações de um documento que foi armazenado nas blockchains de escolha do usuário.
+      operationId: multiple_read
+      parameters:
+        - name: tokenAccess
+          in: header
+          required: true
+          description: user token
+          schema:
+            type: string
+            example: "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwia2V5IjoidGVzdGUifQ.4U6yvolJiNUw-VRRHhRSPPYr10UozHBaaoO7kCksObU"
+      requestBody:
+        description: JSON para a requisição de multipla leitura
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/multiple_readRequest'
+      responses:
+        200:
+          description: O documento foi encontrado com sucesso nas blockchains
+          content:
+            application/json:
+              schema:
+                description: "Schema para read"
+                type: object
+                properties:
+                  result1:
+                    properties:
+                      returnCode:
+                        type: string
+                        example: "success"
+                        description: código de retorno
+                      result:
+                        properties:
+                          idInternal:
+                            type: string
+                            example: "00002"
+                            description: id interno
+                          idUser:
+                            type: string
+                            example: "00002"
+                            description: id do usuario
+                          title:
+                            type: string
+                            example: "title00002"
+                            description: título do documento
+                          description:
+                            type: string
+                            example: "description00002"
+                            description: descrição do documento
+                          hashDocument:
+                            type: string
+                            example: "hash00002"
+                            description: hash do documento
+                  result2:
+                    properties:
+                      returnCode:
+                        type: string
+                        example: "success"
+                        description: código de retorno
+                      result:
+                        properties:
+                          idInternal:
+                            type: string
+                            example: "00002"
+                            description: id interno
+                          idUser:
+                            type: string
+                            example: "00002"
+                            description: id do usuario
+                          title:
+                            type: string
+                            example: "title00002"
+                            description: título do documento
+                          description:
+                            type: string
+                            example: "description00002"
+                            description: descrição do documento
+                          hashDocument:
+                            type: string
+                            example: "hash00002"
+                            description: hash do documento
+        500:
+          description: UNEXPECTED_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500'
+        404:
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404'
+        501:
+          description: INTERNAL_SERVER_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/501'
+#---------------------------multiple_write------------------------
+  /multiple_write:
+      post:
+        tags:
+          - User
+        description: Realiza a inserção das informações de um documento que será armazenado nas blockchains de escolha do usuário
+        operationId: multiple_write
+        parameters:
+          - name: tokenAccess
+            in: header
+            required: true
+            description: user token
+            schema:
+              type: string
+              example: "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwia2V5IjoidGVzdGUifQ.4U6yvolJiNUw-VRRHhRSPPYr10UozHBaaoO7kCksObU"
+        requestBody:
+          description: JSON para a requisição de multiplas escritas
+          required: true
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/write_multipleRequest'
+        responses:
+          200:
+            description: O documento foi inserido com sucesso na blockchain.
+            content:
+              application/json:
+                schema:
+                  description: "Schema para read"
+                  type: object
+                  properties:
+                    result1:
+                      properties:
+                        returnCode:
+                          type: string
+                          example: "success"
+                          description: código de retorno
+                        result:
+                          properties:
+                            idInternal:
+                              type: string
+                              example: "00010"
+                              description: id interno
+                            idUser:
+                              type: string
+                              example: "00010"
+                              description: id do usuario
+                            title:
+                              type: string
+                              example: "title00010"
+                              description: título do documento
+                            description:
+                              type: string
+                              example: "description00010"
+                              description: descrição do documento
+                            hashDocument:
+                              type: string
+                              example: "hash00010"
+                              description: hash do documento
+                        blockchain:
+                          type: string
+                          example: "0"
+                        blocknumber:
+                          type: number
+                          example: 8693695
+                        txId:
+                          type: string
+                          example: "0xf77e4c6bda48f1de325f6aecdd22e4eaf8cb19b3e6aff81ecb9dcc648184a046"
+                    result2:
+                      properties:
+                        returnCode:
+                          type: string
+                          example: "success"
+                          description: código de retorno
+                        result:
+                          properties:
+                            idInternal:
+                              type: string
+                              example: "00010"
+                              description: id interno
+                            idUser:
+                              type: string
+                              example: "00010"
+                              description: id do usuario
+                            title:
+                              type: string
+                              example: "title00010"
+                              description: título do documento
+                            description:
+                              type: string
+                              example: "description00010"
+                              description: descrição do documento
+                            hashDocument:
+                              type: string
+                              example: "hash00010"
+                              description: hash do documento
+                        blockchain:
+                          type: string
+                          example: "0"
+                        blocknumber:
+                          type: number
+                          example: 8693695
+                        txId:
+                          type: string
+                          example: "0xf77e4c6bda48f1de325f6aecdd22e4eaf8cb19b3e6aff81ecb9dcc648184a046"
+          500:
+            description: UNEXPECTED_ERROR
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/500'
+          412:
+            description: ALREADY_EXISTING_DOCUMENT
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/412'
+          501:
+            description: INTERNAL_SERVER_ERROR
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/501'
+#Componentes
+components:
+  securitySchemes:
+    ApiAuthKey:
+      type: apiKey
+      in: header
+      name: X-auth-Token
+      
+  schemas:
+#---------------------------tokenRequest------------------------
+    tokenRequest:
+      description: "Schema para token Request"
+      type: object
+      properties:
+        orgKey:
+          description: Id da organização que será utilizada para a criação do token.
+          type: string
+          example: "12902s4kpw3xyn2"
+#---------------------------createOrganizationRequest------------------------
+    createOrganizationRequest:
+      description: "Schema para create Organization Request"
+      type: object
+      properties:
+        name:
+          description: Nome da organização que será cadastrada.
+          type: string
+          example: "teste"
+        address:
+          description: Endereço da organização que será cadastrada.
+          type: string
+          example: "12345"
+#---------------------------createModelRequest------------------------
+    createModelRequest:
+      description: "Schema para create Model Request"
+      type: object
+      properties:
+        description:
+          description: Uma breve descrição do modelo.
+          type: string
+          example: "Modelo de teste com cinco atributos"
+        attributes:
+          description: Atributos que serão armazenados no contrato separados por ponto e vírgula.
+          type: string
+          example: "title; sector; place; hashDocument; timestamp"
+#---------------------------deployContractRequest------------------------
+    deployContractRequest:
+      description: "Schema para deploy Contract Request"
+      type: object
+      properties:
+        blockchain:
+          type: string
+          description: Código referente à blockchain que será feito o deploy,no caso Ethereum.
+          example: "0"
+        model:
+          type: string
+          description: Código referente ao modelo que será feito o deploy.
+          example: "15i2gyx344kqqiebfy"
+#---------------------------readContractRequest------------------------
+    readContractRequest:
+      description: "Schema para read contract"
+      type: object
+      properties:
+        idContract:
+          type: string
+          example: "g2pcb5mckpifm16g"
+        idDocument:
+          type: string
+          example: "asgas5g00fdnd"
+          description: id referente ao documento gravado na blockchain.
+#---------------------------writeRequest------------------------             
+    write_multipleRequest:
+      description: "Schema para write_multiple"
+      type: object
+      properties:
+        blockchain:
+          type: array
+          items:
+            example: ["0", "2"]
+            description: array referente as blockchains na qual serão inseridas as informações do documento
+        from:
+          type: array
+          items:
+            example: ["0xfA568B7D9B496C29A8429474D60c2Ef13582DD35", "0x98d3fa277c49f809da2fd50d6efe0c4a01f7949c8e55a450bf036ed3c7951ef2"]
+            
+            description: array referente aos endereços das carteiras que serão utilizadas nas escritas do documento
+        
+        value:
+          properties:
+            docsAttributes:
+              type: string
+              description: array referente aos atributos de inserção no contrato
+              example: [idRequest, model, igOrg, ..., timestamp]
+#---------------------------multiple_readRequest------------------------
+    multiple_readRequest:
+      description: "Schema para read"
+      type: object
+      properties:
+        blockchain:
+          type: array
+          items:
+            example: ["0", "2"]
+            description: array referente as blockchains na qual serão lidas as informações do documento
+        value:
+          properties:
+            idRequest: 
+              type: string
+              example: "00002"
+              description: id referente ao documento gravado na blockchain
+#---------------------------writeContractRequest------------------------             
+    writeContractRequest:
+      description: "Schema para write contract"
+      type: object
+      properties:
+        idContract:
+          type: string
+          example: "g2pcb5mckpifm16g"
+        from:
+          type: string
+          example: "0xfA568B7D9B496C29A8429474D60c2Ef13582DD35"
+          description: Endereço da carteira que será utilizada para escrita do documento. Esse parâmetro não é obrigatório.
+        value:
+            type: string
+            description: Array referente aos atributos de inserção no contrato
+            example: [title01, sector01, place01, hashDocument01, 10000000]
+#---------------------------erro 404------------------------
+    404:
+      description: "Schema para 404"
+      type: object
+      properties:
+        returnCode:
+          type: string
+          example: "failure"
+        code:
+          type: string
+          example: "DOCUMENTO_INEXISTENTE"
+        message:
+          type: string
+          example: "Documento com esse id não foi encontrado"
+#---------------------------erro 412------------------------
+    412:
+      description: "Schema para 412"
+      type: object
+      properties:
+        returnCode:
+          type: string
+          example: "failure"
+        code:
+          type: string
+          example: "DOCUMENTO_JA_EXISTE"
+        message:
+          type: string
+          example: "Documento com este id já existe na blockchain"
+#---------------------------erro 500--------------------
+    500:
+      description: "Schema para 500"
+      type: object
+      properties:
+        returnCode:
+          type: string
+          example: "failure"
+        code:
+          type: string
+          example: "ERRO_INESPERADO"
+        message:
+          type: string
+          example: "Algo inesperado aconteceu e não foi possível realizar a solicitação."
+#---------------------------erro 501------------------------       
+    501:
+      description: "Schema para 501"
+      type: object
+      properties:
+        returnCode:
+          type: string
+          example: "failure"
+        code:
+          type: string
+          example: "ERRO_CONEXÃO"
+        message:
+          type: string
+          example: "Erro ao conectar com a blockchain"
