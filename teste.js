@@ -1,9 +1,69 @@
 const Web3 = require('web3');
 const data = require('./env.json');
+var Promise = require('bluebird');
 
 const web3Test = new Web3(data.endpoint);
 const instance = new web3Test.eth.Contract(data.registerDocumentAbi, data.RegisterDocumentAddress);
-var Promise = require('bluebird');
+
+/* async function read(value){
+    let get_nonce = await web3Test.eth.getTransactionCount(data.walletAddress);
+    console.log(get_nonce);
+    let response = await instance.methods.readDocument(value).call();
+    get_nonce = await web3Test.eth.getTransactionCount(data.walletAddress);
+    console.log(get_nonce);
+    console.log(response);
+}
+
+read('x'); */
+
+async function write(num, value){
+    let get_nonce = await web3Test.eth.getTransactionCount(data.walletAddress);
+    console.log(get_nonce);
+    get_nonce = await web3Test.eth.getTransactionCount(data.walletAddress) + 1;
+    console.log(get_nonce);
+    get_nonce = await web3Test.eth.getTransactionCount(data.walletAddress);
+    console.log(get_nonce);
+
+    /* let account = web3Test.eth.accounts.wallet.add(data.privateKey);
+    let response = await instance.methods.insertDocument(num, value).send({
+        from: account.address,
+        gas: '100000',
+        nonce: get_nonce
+    });
+    console.log(response);
+    get_nonce = await web3Test.eth.getTransactionCount(data.walletAddress);
+    console.log(get_nonce); */
+}
+
+write('e', ['a', 'b']);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 async function ler (num) {
     let response = await instance.methods.readDocument(num).call();
@@ -19,7 +79,7 @@ async function escrever () {
     console.log(response);
     let nounce = await web3Test.eth.getTransaction(response.transactionHash);
     console.log(nounce.nonce);
-    
+
 }
 
 async function multi_escrita () {
@@ -78,7 +138,7 @@ async function loop(num) {
 
 
 /* let aux = 10;
-var promises = []; 
+var promises = [];
 let account = web3Test.eth.accounts.wallet.add(data.privateKey);
 let nounce = '';
 for (i = 0; i < 3; i++){
@@ -101,7 +161,7 @@ Promise.all(promises).then(function(results) {
 });
  */
 
-async function getNonce() {
+/* async function getNonce() {
     let account = web3Test.eth.accounts.wallet.add(data.privateKey);
     let response = await instance.methods.insertDocument('51', ['52', '53']).send({
         from: account.address,
@@ -115,7 +175,7 @@ async function getNonce() {
         gas: '100000',
         nonce: nonce
     });
-    
+
 }
 
-getNonce();
+getNonce(); */
